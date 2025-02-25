@@ -1,8 +1,8 @@
 ## Test LLM Agent Evaluator 
 
 ## Description
-This is a data analysis agent that is inspired by the DeepLearning.AI course "Evaluating AI Agents"
-It will query GPT 4.0 mini to query data from a database (in this test case just a file contained in `/data`), run an LLM analysis on the data, and generate a visual representation of the data
+This is a data analysis agent that is inspired by the DeepLearning.AI course "Evaluating AI Agents".
+It will promt GPT 4.0 mini to query data from a database (in this test case just a file contained in `/data`), run an LLM analysis on the data, and then generate a visual representation of the data.
 
 ## How to run data analysis agent
  1) optional: instantiate venv
