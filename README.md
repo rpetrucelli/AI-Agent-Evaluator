@@ -10,3 +10,7 @@ It will query GPT 4.0 mini to query data from a database (in this test case just
  3) configure your openAI API key in helper.py
  3) nav to `src/data_analysis_agent`
  4) `python router.py` will run the agent with the hardcoded prompt input
+
+
+## Note
+to protect my API key, I have asked git to stop tracking `helper.py` by running `git update-index --assume-unchanged .\src\data_analysis_agent\helper.py` from the CLI
