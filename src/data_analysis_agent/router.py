@@ -113,8 +113,9 @@ def run_agent(messages):
 # allow the agent to be run via cli
 if __name__ == "__main__":
     if len(sys.argv) > 1:
-        result = run_agent(sys.argv[0])
-        print(result)
+        prompt = " ".join(sys.argv[1:])
+        result = run_agent(prompt)
+        print("results: \n" + result)
 
     else:
         print("usage: python router.py <'your prompt here'>")
