@@ -1,4 +1,4 @@
-# Test LLM Agent Evaluator 
+# LLM Agent Evaluator 
 
 ## Project Description
 This is a data analysis agent and evaluation platform that is inspired by the DeepLearning.AI course "Evaluating AI Agents".
