@@ -2,13 +2,18 @@ from pydantic import BaseModel, Field
 from config import client, MODEL
 from .data_lookup import lookup_sales_data
 
-# prompt template for step 1 of tool 3
+## in this file, we take a 2 step approach to visualize the data, which reduces variance in and improves the accuracy off the LLMs response
+# Firstly, we use an LLM call to generate the correct chart configuration
+# Secondly, we use another LLM to generate the code for the data visualization for the chat configuration defined in the first step
+
+
+# Define a prompt to generate a chart configuration based on a natural language goal
 CHART_CONFIGURATION_PROMPT = """
 Generate a chart configuration based on this data: {data}
 The goal is to show: {visualization_goal}
 """
 
-# prompt template for step 2 of tool 3
+# Prompt to generate the code for a data visualization 
 CREATE_CHART_PROMPT = """
 Write python code to create a chart based on the following configuration.
 Only return the code, no other text.
@@ -23,7 +28,7 @@ class VisualizationConfig(BaseModel):
     y_axis: str = Field(..., description="Name of the y-axis column")
     title: str = Field(..., description="Title of the chart")
 
-    # code for step 1 of tool 3
+    # method to generate the chart configurations
     def extract_chart_config(data: str, visualization_goal: str) -> dict:
         """Generate chart visualization configuration
         
@@ -63,7 +68,7 @@ class VisualizationConfig(BaseModel):
                 "data": data
             }
         
-# code for step 2 of tool 3
+# 2nd step, create a chart based on the config defined in the above method
 def create_chart(config: dict) -> str:
     """Create a chart based on the configuration"""
     formatted_prompt = CREATE_CHART_PROMPT.format(config=config)
@@ -79,13 +84,16 @@ def create_chart(config: dict) -> str:
     
     return code
 
-# code for tool 3
+# TODO, add a 3rd method to error check the code generated
+
+# Method to tie the 2 steps together and return the code for the visualizations
 def generate_visualization(data: str, visualization_goal: str) -> str:
     """Generate a visualization based on the data and goal"""
     config = VisualizationConfig.extract_chart_config(data, visualization_goal)
     code = create_chart(config)
     return code
 
-# example usage of the data visualization tool
-visualization_prompt = "A bar chart of sales by product SKU. Put the product SKU on the x-axis and the sales on the y-axis."
-code = generate_visualization(lookup_sales_data("Show me all the sales for store 1320 on November 1st, 2021"), visualization_prompt)
+### example usage
+# visualization_prompt = "A bar chart of sales by product SKU. Put the product SKU on the x-axis and the sales on the y-axis."
+# code = generate_visualization(lookup_sales_data("Show me all the sales for store 1320 on November 1st, 2021"), visualization_prompt)
+# exec(code) # if you wish to actually generate the visualization

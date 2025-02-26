@@ -3,8 +3,9 @@ from tools.data_analysis import analyze_sales_data
 from tools.data_visualization import generate_visualization
 import json
 from  config import client, MODEL
+import sys
 
-# Define tools/functions that can be called by the model
+# Define tools/functions that can be called by the model in the accepted syntax
 tools = [
     {
         "type": "function",
@@ -59,6 +60,7 @@ tool_implementations = {
     "generate_visualization": generate_visualization
 }
 
+# define the LLM routers' behavior
 SYSTEM_PROMPT = """
 You are a helpful assistant that can answer questions about the Store Sales Price Elasticity Promotions dataset.
 """
@@ -77,16 +79,16 @@ def handle_tool_calls(tool_calls, messages):
 def run_agent(messages):
     print("Running agent with messages:", messages)
 
+    # check for incorrect syntax
     if isinstance(messages, str):
         messages = [{"role": "user", "content": messages}]
         
-    # Check and add system prompt if needed
-    if not any(
-            isinstance(message, dict) and message.get("role") == "system" for message in messages
-        ):
+    # add system prompt if needed
+    if not any( isinstance(message, dict) and message.get("role") == "system" for message in messages ):
             system_prompt = {"role": "system", "content": SYSTEM_PROMPT}
             messages.append(system_prompt)
 
+    # define a loop to recursively make tool calls while the LLM router decides they are necessary
     while True:
         print("Making router call to OpenAI")
         response = client.chat.completions.create(
@@ -102,20 +104,26 @@ def run_agent(messages):
         if tool_calls:
             print(f"Processing tool calls: {tool_calls[0].function.name}")
             messages = handle_tool_calls(tool_calls, messages)
+
+        # otherwise, break the loop
         else:
             print("No tool calls, returning final response")
             return response.choices[0].message.content
-        
+
+# allow the agent to be run via cli
 if __name__ == "__main__":
-     result = run_agent('Show me the code for graph of sales by store in Nov 2021, and tell me what trends you see.')
-     print(result)
+    if len(sys.argv) > 1:
+        result = run_agent(sys.argv[0])
+        print(result)
 
+    else:
+        print("usage: python router.py <'your prompt here'>")
 
-
-## Example usage
+### Example usage
 # result = run_agent('Show me the code for graph of sales by store in Nov 2021, and tell me what trends you see.')
-# print(result) will then produce the below >>>
+# print(result) will then produce something similar to below:
 
+### ------------------------------
 # Here is the Python code to create a graph of sales by store for November 2021:
 
 # ```python
@@ -180,3 +188,4 @@ if __name__ == "__main__":
 # 4. **Potential for Improvement**: Stores with lower performance could benefit from a review of inventory, marketing strategies, and customer engagement tactics.
 
 # This analysis provides insights into store performance and can guide strategic decisions for inventory management, marketing initiatives, and potential promotions.
+### ------------------------------
