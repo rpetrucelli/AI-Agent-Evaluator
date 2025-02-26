@@ -115,7 +115,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         prompt = " ".join(sys.argv[1:])
         result = run_agent(prompt)
-        print("results: \n" + result)
+        print("Results: \n" + result)
 
     else:
         print("usage: python router.py <'your prompt here'>")
@@ -127,59 +127,8 @@ if __name__ == "__main__":
 ### ------------------------------
 # Here is the Python code to create a graph of sales by store for November 2021:
 
-# ```python
-# import pandas as pd
-# import matplotlib.pyplot as plt
-# from io import StringIO
-
-# data = """Store_Number  Total_Qty_Sold  Total_Sales_Value
-# 0           1100          1712.0       19298.679917
-# 1           3300          1859.0       23730.719905
-# 2           3190          1003.0       11934.999961
-# 3            880          1525.0       17753.769956
-# 4           4180           913.0       10213.819920
-# 5            550           764.0        9554.049975
-# 6           1650          1770.0       23186.909958
-# 7           1210          1821.0       21021.669984
-# 8           2750          1462.0       16310.409961
-# 9           1760          1207.0       14598.209948
-# 10          1980           893.0        9084.959929
-# 11           330          1105.0       12569.599911
-# 12          990          1280.0       15101.459945
-# 13          3410          1345.0       15982.159946
-# 14          2640          1005.0       10891.639931
-# 15          2090          1080.0       11617.179888
-# 16          4840          1612.0       19127.169971
-# 17          3080          1454.0       18044.450005
-# 18          1320          1701.0       19553.789981
-# 19          1540          1801.0       21207.689942
-# 20          4070           932.0        9161.409921
-# 21          4730           819.0       10571.779962
-# 22          2420          1370.0       15234.709888
-# 23           660          1208.0       13041.239901
-# 24           770           973.0        9181.769959
-# 25          2970          2312.0       31000.569969
-# 26          2530           890.0       11139.740003
-# 27          3740           949.0       10719.049952
-# 28          4400           225.0        4390.689987
-# 29          2200          1513.0       16854.439921
-# 30          2310          1594.0       16611.539945
-# 31          1870          1648.0       17091.849894
-# 32          3630          1311.0       14202.299958"""
-
-# # Load data into a pandas DataFrame
-# df = pd.read_csv(StringIO(data), sep=r'\s+')
-
-# # Create a line chart
-# plt.figure(figsize=(10, 6))
-# plt.plot(df['Store_Number'], df['Total_Sales_Value'], marker='o')
-# plt.title('Sales by Store in November 2021')
-# plt.xlabel('Store Number')
-# plt.ylabel('Total Sales Value')
-# plt.grid(True)
-# plt.xticks(df['Store_Number'], rotation=45)
-# plt.tight_layout()
-# plt.show()
+# ```
+#    python code that can be run to generate a graph of the data
 # ```
 
 # ### Trends Observed:
