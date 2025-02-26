@@ -1,12 +1,12 @@
 # LLM Agent Evaluator 
 
 ## Project Description
-An AI data analysis agent and evaluation platform that is inspired by the DeepLearning.AI course "Evaluating AI Agents".
+An AI data analysis agent and evaluation platform that is inspired by the DeepLearning.AI course "Evaluating AI Agents"
 
 ### Agent Description
-The agent defined in `src/data_analysis_agent/` will prompt GPT 4.0 mini to query data from a database (in this test case, just a file contained in `/data`), run an LLM analysis on the data, and then generate python code to build a visual representation of the data, all defined by user-input natural language.
+The agent defined in `src/data_analysis_agent/` will prompt GPT 4.0 mini to query data from a database (in this test case, just a file contained in `/data`), run an LLM analysis on the data, and then generate python code to build a visual representation of the data, all defined by user-input natural language
 
-Each of these operations is defined in their own files in the `tools/` dir, and the order in which the tools are run in is decided by a LLM router as defined in the `run_agent()` method in `router.py`.
+Each of these operations is defined in their own files in the `tools/` dir, and the order in which the tools are run in is decided by a LLM router as defined in the `run_agent()` method in `router.py`
 
 ### LLM Evaluator Description
 In development
