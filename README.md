@@ -8,7 +8,8 @@ The agent defined in `src/data_analysis_agent/` will prompt GPT 4.0 mini to quer
 
 Each of these operations is defined in their own files in the `tools/` dir, and the order in which the tools are run in is decided by a LLM router as defined in the `run_agent()` method in `router.py`.
 
-## How to run data analysis agent
+## How to run 
+### data analysis agent
  1) Optional: Instantiate a virtual environment with `python -m venv venv`
  2) Install Requirements: `pip install -r requirements.txt`
  3) Configure your openAI API key in helper.py (you will need tokens to run this)
