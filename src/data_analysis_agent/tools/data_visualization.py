@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 from config import client, MODEL
 from .data_lookup import lookup_sales_data
 
-## in this file, we take a 2 step approach to visualize the data, which reduces variance in and improves the accuracy off the LLMs response
+## in this file, we take a 2 step approach to visualize the data, which reduces variance in and improves the accuracy of the LLMs response
 # Firstly, we use an LLM call to generate the correct chart configuration
 # Secondly, we use another LLM to generate the code for the data visualization for the chat configuration defined in the first step
 
