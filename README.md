@@ -4,23 +4,29 @@
 An AI data analysis agent and evaluation platform inspired by the DeepLearning.AI course "Evaluating AI Agents"
 
 ### LLM Agent Description
-The agent defined in `src/data_analysis_agent/` will prompt GPT 4.0 mini to query data from a database (in this test case, just a file contained in `/data`), run an LLM analysis on the data, and then generate python code to build a visual representation of the data, all defined by user-input natural language
+The agent defined in `src/data_analysis_agent/` will prompt GPT 4.0 mini to execute one or more of the following actions:
+- query data from a database (in this test case, just a file contained in `/data`), 
+- run an analysis on the data
+- generate python code to build a visual representation of the data
+- execute code to create visualizations
 
-Each of these operations is defined in their own files in the `tools/` dir, and the order in which the tools are run is decided by an LLM router as defined in the `run_agent()` method in `router.py`
+all defined by user-input natural language
+
+Each of these operations is defined in their own files in the `tools/` dir..
+The order in which the tools are run is decided by the  LLM router defined in the `run_agent()` method of `router.py`
 
 ### LLM Evaluator Description
-In development
+In dev
 
 ## How to run 
 ### Data Analysis Agent
- 1) Optional: Instantiate a virtual environment with `python -m venv venv`
- 2) Install Requirements: `pip install -r requirements.txt`
- 3) Configure your openAI API key in helper.py (you will need tokens to run this)
- 3) Nav to `./src/data_analysis_agent/`
- 4) Run `python router.py <'your request'>` from the CLI
+ 1) Instantiate a virtual environment with `python -m venv venv` (optional)
+ 2) Install Requirements with `pip install -r requirements.txt`
+ 3) Configure your openAI API key in helper.py (you will need OpenAI tokens to run this)
+ 4) Run `python ./src/data_analysis_agent/router.py <'your request'>` from the CLI with any request of your choosing
 
- eg. `python router.py 'Show me the code for graph of sales by store in Nov 2021, and tell me what trends you see.'`
-
+ eg. `python router.py 'Generate a line graph of sales in December 2022 by store'` or `'What are the best performing products'` or `Based on product performance, how can I increase my overall sales?`, etc.
+  
 ### LLM Evaluator
 In development
 
