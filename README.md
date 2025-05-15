@@ -7,15 +7,15 @@ Inspired by the DeepLearning.AI course "Evaluating AI Agents"
 
 ### LLM Agent Description
 The agent defined in `src/data_analysis_agent/` will prompt GPT 4.0 mini to execute one or more of the following actions:
-- Query data from a database (in this test case, just a file contained in `/data`), 
-- Run an analysis on the data
+- Query a database (in this test case, just a file contained in `/data`), 
+- Run analysis on the data
 - Generate python code to build a visual representation of the data
 - Execute code to create visualizations
 
 ...all defined by user-input natural language
 
-Each of these operations is defined in their own files in the `tools/` dir..
-The order in which the tools are run is decided by the  LLM router defined in the `run_agent()` method of `router.py`
+Each of these operations is defined in their own files in the `src/data_analysis_agent/tools/` dir.  
+The order in which the tools are run is decided by the  LLM router defined in the `run_agent()` method of `src/data_analysis_agent/router.py`
 
 ### LLM Evaluator Description
 In dev
