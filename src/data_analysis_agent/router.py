@@ -1,6 +1,7 @@
 from tools.data_lookup import lookup_sales_data
 from tools.data_analysis import analyze_sales_data
-from tools.data_visualization import generate_visualization
+from tools.data_visualization import generate_visualization_code
+from tools.generate_graph import execute_generated_code
 import json
 from  config import client, MODEL
 import sys
@@ -11,7 +12,7 @@ tools = [
         "type": "function",
         "function": {
             "name": "lookup_sales_data",
-            "description": "Look up data from Store Sales Price Elasticity Promotions dataset",
+            "description": "Look up data from Store Sales Price Elasticity Promotions dataset. If specified, be sure to use the time period and stores mentioned in the prompt.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -25,7 +26,7 @@ tools = [
         "type": "function",
         "function": {
             "name": "analyze_sales_data", 
-            "description": "Analyze sales data to extract insights",
+            "description": "Analyze sales data to extract insights. Do this is in the most efficient way possible while staying true to the prompt.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -39,8 +40,8 @@ tools = [
     {
         "type": "function",
         "function": {
-            "name": "generate_visualization",
-            "description": "Generate Python code to create data visualizations",
+            "name": "generate_visualization_code",
+            "description": "Generate highly efficeint Python code to represent data visualizations. If the user asked for a line graph, give each store its own line. If the user asked for a bar graph, give each store its own bar. If the user asked for a pie chart, give each store its own slice.",
             "parameters": {
                 "type": "object", 
                 "properties": {
@@ -50,29 +51,46 @@ tools = [
                 "required": ["data", "visualization_goal"]
             }
         }
+    },
+    {
+    "type": "function",
+    "function": {
+        "name": "execute_generated_code",
+        "description": "If the user asked to see it, execute the generated visualization code from the generate_visualization_code tool",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "generated_code": {"type": "string", "description": "The Python code to execute."}
+            },
+            "required": ["generated_code"]
+        }
     }
+}
 ]
 
 # Dictionary mapping function names to their implementations
 tool_implementations = {
     "lookup_sales_data": lookup_sales_data,
-    "analyze_sales_data": analyze_sales_data, 
-    "generate_visualization": generate_visualization
+    "analyze_sales_data": analyze_sales_data,
+    "generate_visualization_code": generate_visualization_code,
+    "execute_generated_code": execute_generated_code 
 }
 
 # define the LLM routers' behavior
 SYSTEM_PROMPT = """
-You are a helpful assistant that can answer questions about the Store Sales Price Elasticity Promotions dataset.
+You are a helpful data scientist that excels in analyzing and answer questions about the Store Sales Price Elasticity Promotions dataset.
+You excel at generating clean and readable visaulizations of the data.
 """
 
 # code for executing the tools returned in the model's response
 def handle_tool_calls(tool_calls, messages):
-    
     for tool_call in tool_calls:   
         function = tool_implementations[tool_call.function.name]
         function_args = json.loads(tool_call.function.arguments)
         result = function(**function_args)
         messages.append({"role": "tool", "content": result, "tool_call_id": tool_call.id})
+
+        print(f"Completed tool call to {function}")
         
     return messages
 
