@@ -1,16 +1,18 @@
 # LLM Agent & Evaluator 
 
 ## Project Description
-An AI data analysis agent and evaluation platform inspired by the DeepLearning.AI course "Evaluating AI Agents"
+An AI data analysis agent capable of querying a dataset, analyzing for trends, and creating visualizations of data from user-defined parameters
+
+Inspired by the DeepLearning.AI course "Evaluating AI Agents"
 
 ### LLM Agent Description
 The agent defined in `src/data_analysis_agent/` will prompt GPT 4.0 mini to execute one or more of the following actions:
-- query data from a database (in this test case, just a file contained in `/data`), 
-- run an analysis on the data
-- generate python code to build a visual representation of the data
-- execute code to create visualizations
+- Query data from a database (in this test case, just a file contained in `/data`), 
+- Run an analysis on the data
+- Generate python code to build a visual representation of the data
+- Execute code to create visualizations
 
-all defined by user-input natural language
+...all defined by user-input natural language
 
 Each of these operations is defined in their own files in the `tools/` dir..
 The order in which the tools are run is decided by the  LLM router defined in the `run_agent()` method of `router.py`
@@ -28,7 +30,7 @@ In dev
  eg. `python router.py 'Generate a line graph of sales in December 2022 by store'` or `'What are the best performing products'` or `Based on product performance, how can I increase my overall sales?`, etc.
   
 ### LLM Evaluator
-In development
+In dev
 
 ## Note
 To protect my API key, I told git to stop tracking `helper.py` by running `git update-index --assume-unchanged .\src\data_analysis_agent\helper.py` from the CLI
