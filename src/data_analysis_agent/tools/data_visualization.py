@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from config import client, MODEL
 
-## in this file, we take a 2 step approach to visualize the data, which reduces variance in, and improves the accuracy of, the LLMs response
+## in this file, we take a 2 step approach to visualize the data, which reduces variance in and improves the accuracy of the LLMs response
 # Firstly, we use an LLM call to generate the correct chart configuration
 # Secondly, we use another LLM to generate the code for the data visualization for the chat configuration defined in the first step
 
@@ -14,25 +14,23 @@ The goal is to show: {visualization_goal}
 
 # Prompt to generate the code for a data visualization 
 CREATE_CHART_PROMPT = """
-Write python code to create a chart based on the following configuration.
+Write clean and efficient python code to create a chart based on the following configuration.
 Only return the code, no other text.
 config: {config}
 """
 
 
-# class defining the response format of step 1
+# class defining the response format
 class VisualizationConfig(BaseModel):
-
-    # use pydantic types to define the expected response format
     chart_type: str = Field(..., description="Type of chart to generate")
     x_axis: str = Field(..., description="Name of the x-axis column")
     y_axis: str = Field(..., description="Name of the y-axis column")
     title: str = Field(..., description="Title of the chart")
 
-    # method to generate the chart config
+    # method to generate the chart configurations
     def extract_chart_config(data: str, visualization_goal: str) -> dict:
         """Generate chart visualization configuration
-
+        
         Args:
             data: String containing the data to visualize
             visualization_goal: Description of what the visualization should show
@@ -41,13 +39,13 @@ class VisualizationConfig(BaseModel):
             Dictionary containing line chart configuration
         """
         formatted_prompt = CHART_CONFIGURATION_PROMPT.format(data=data, visualization_goal=visualization_goal)
-
+        
         response = client.beta.chat.completions.parse(
             model=MODEL,
             messages=[{"role": "user", "content": formatted_prompt}],
             response_format=VisualizationConfig,
         )
-
+        
         try:
             # Extract axis and title info from response
             content = response.choices[0].message.content
@@ -60,8 +58,6 @@ class VisualizationConfig(BaseModel):
                 "title": content.title,
                 "data": data
             }
-        
-        # Handle any exceptions that occur during parsing
         except Exception:
             return {
                 "chart_type": "line", 
@@ -70,21 +66,21 @@ class VisualizationConfig(BaseModel):
                 "title": visualization_goal,
                 "data": data
             }
-    
-# 2nd step, create a chart based on the config defined in the above method
+        
+# create a chart based on the config defined in the above method
 def create_chart(config: dict) -> str:
     """Create a chart based on the configuration"""
     formatted_prompt = CREATE_CHART_PROMPT.format(config=config)
-
+    
     response = client.chat.completions.create(
         model=MODEL,
         messages=[{"role": "user", "content": formatted_prompt}],
     )
-
+    
     code = response.choices[0].message.content
     code = code.replace("```python", "").replace("```", "")
     code = code.strip()
-
+    
     return code
 
 # TODO, add a 3rd method to error check the code generated

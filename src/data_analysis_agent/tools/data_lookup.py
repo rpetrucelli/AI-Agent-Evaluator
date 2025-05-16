@@ -8,7 +8,7 @@ TRANSACTION_DATA_FILE_PATH = 'data/Store_Sales_Price_Elasticity_Promotions_Data.
 
 # natural language prompt to get the LLM to generate an SQL query based on a user defined prompt on the specified table
 SQL_GENERATION_PROMPT = """
-Generate an SQL query based on a prompt. Do not reply with anything besides the SQL query.
+Generate an efficient SQL query based on a prompt. Do not reply with anything besides the SQL query.
 The prompt is: {prompt}
 
 The available columns are: {columns}

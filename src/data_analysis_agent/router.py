@@ -12,7 +12,7 @@ tools = [
         "type": "function",
         "function": {
             "name": "lookup_sales_data",
-            "description": "Look up data from Store Sales Price Elasticity Promotions dataset. If specified, be sure to use the time period and stores mentioned in the prompt.",
+            "description": "Look up data from Store Sales Price Elasticity Promotions dataset",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -26,7 +26,7 @@ tools = [
         "type": "function",
         "function": {
             "name": "analyze_sales_data", 
-            "description": "Analyze sales data to extract insights. Do this is in the most efficient way possible while staying true to the prompt.",
+            "description": "Analyze sales data to extract insights.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -41,7 +41,7 @@ tools = [
         "type": "function",
         "function": {
             "name": "generate_visualization_code",
-            "description": "Generate highly efficeint Python code to represent data visualizations. If the user asked for a line graph, give each store its own line. If the user asked for a bar graph, give each store its own bar. If the user asked for a pie chart, give each store its own slice.",
+            "description": "Generate Python code to represent data visualizations.",
             "parameters": {
                 "type": "object", 
                 "properties": {
@@ -56,7 +56,7 @@ tools = [
     "type": "function",
     "function": {
         "name": "execute_generated_code",
-        "description": "If the user asked to see it, execute the generated visualization code from the generate_visualization_code tool",
+        "description": "Execute the data visualization code from the generate_visualization_code tool",
         "parameters": {
             "type": "object",
             "properties": {
