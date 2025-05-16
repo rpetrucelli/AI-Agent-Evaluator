@@ -1,4 +1,4 @@
-# LLM Data Analysis Agent & Evaluator 
+# LLM Data Analysis Agent with Tracing and Evaluation
 
 ## Project Description
 AI data analysis agent capable of querying a sales database, analyzing trends, and creating data visualizations
@@ -8,7 +8,7 @@ Tracing and observability is provided by Arize Phoenix, an open-source observabi
 
 Inspired by the DeepLearning.AI course "Evaluating AI Agents"
 
-### LLM Agent Description
+### LLM Agent
 The agent defined in `src/data_analysis_agent/` will call GPT-4o mini to execute one or more of the following actions:
 - Query a database (currently a duckdb table loaded from the dataset in `src/data_analysis_agent/data/`)
 - Run analysis on the data
@@ -20,7 +20,11 @@ The agent defined in `src/data_analysis_agent/` will call GPT-4o mini to execute
 Each of these operations is defined in their own file contained in`src/data_analysis_agent/tools/`  
 Tool execution is decided by the LLM router `run_agent()` in `src/data_analysis_agent/router.py`
 
-### LLM Evaluator Description
+### LLM Evaluator
+In dev
+
+
+## Agent Tracing
 Arize Phoenix provides all observability tracing in a localhost server.
 This provides robust tracing of the agents behvavior and performance by logging:
 - Tool & LLM calls
@@ -38,7 +42,7 @@ Once starting the server, the dashboard will be accessible via the link console 
 2) Install requirements: `pip install -r requirements.txt`
 3) Configure your OpenAI API key in `src/data_analysis_agent/helper.py` (you will need tokens to run this)
 
-### LLM Evaluator
+### Start Tracing
 In a terminal window, run `phoenix serve`
 
 ### Data Analysis Agent
