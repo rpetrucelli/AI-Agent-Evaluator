@@ -1,7 +1,7 @@
 # LLM Agent & Evaluator 
 
 ## Project Description
-AI data analysis agent capable of querying a sales database, analyzing trends, and creating data visualizations.
+AI data analysis agent capable of querying a sales database, analyzing trends, and creating data visualizations
 Leverages OpenAI GPT-4o mini
 
 Tracing and observability is provided by Arize Phoenix, an open-source observability tool
