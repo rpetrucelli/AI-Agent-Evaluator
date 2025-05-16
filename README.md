@@ -17,15 +17,16 @@ The agent defined in `src/data_analysis_agent/` will prompt GPT 4.0 mini to exec
 ...all defined by user-input natural language
 
 Each of these operations is defined in their own files in the `src/data_analysis_agent/tools/` dir.  
-The order in which the tools are run is decided by the  LLM router defined in the `run_agent()` method of `src/data_analysis_agent/router.py`
+The tool execution order is decided by the LLM router defined in the `run_agent()` method of `src/data_analysis_agent/router.py`
 
 ### LLM Evaluator Description
-Arize Phoenix provides all observability tracing in a localhost server  
-This provides robust tracing of the agents behvavior and performance by logging
-- Tool Calls
-- LLM Calls
+Arize Phoenix provides all observability tracing in a localhost server.
+This provides robust tracing of the agents behvavior and performance by logging:
+- Tool & LLM calls
+- Execution order
 - Token usage
 - Performance
+- and more!
 
 Once starting the server, the dashboard will be accessible via the link console logged at the end of each execution (it should be "http://localhost:6006/v1/traces")
 
