@@ -3,7 +3,7 @@ from tools.data_lookup import lookup_sales_data
 from tools.data_analysis import analyze_sales_data
 from tools.data_visualization import generate_visualization_code
 from tools.create_graph import execute_generated_code
-import sys, json
+import json
 from  config import client, MODEL
 from tracing import tracer
 from opentelemetry.trace import StatusCode
@@ -116,7 +116,7 @@ def run_agent(messages):
         print("Starting router call span")
 
         with tracer.start_as_current_span("router_call", openinference_span_kind="chain") as span:
-            # set the span input and call the model 
+            # set the span input and call the model with any tools
             span.set_input(value=messages) 
             response = client.chat.completions.create(
                 model=MODEL,
@@ -142,7 +142,7 @@ def run_agent(messages):
 def start_main_span(messages):
     print("Starting main span with messages:", messages)
     
-    with tracer.start_as_current_span("AgentRun", openinference_span_kind="agent") as span:
+    with tracer.start_as_current_span("Run Data Analysis Agent", openinference_span_kind="agent") as span:
         span.set_input(value=messages)
         ret = run_agent(messages)
         print("Main span completed with return value:", ret)
@@ -166,5 +166,6 @@ if __name__ == "__main__":
 ### ------Example usage-----------
 ###
 ### python router.py
+### Enter your prompt: "What is the average sales price for each product in the dataset?"
 ###
 ### ------------------------------
