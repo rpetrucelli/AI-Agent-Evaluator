@@ -24,7 +24,7 @@ Tool execution is decided by the LLM router `run_agent()` in `src/data_analysis_
 In dev
 
 
-## Agent Tracing
+### Agent Tracing
 Arize Phoenix provides all observability tracing in a localhost server.
 This provides robust tracing of the agents behvavior and performance by logging:
 - Tool & LLM calls
