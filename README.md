@@ -38,11 +38,13 @@ Once starting the server, the dashboard will be accessible via the link console 
 3) Configure your OpenAI API key in `src/data_analysis_agent/helper.py` (you will need tokens to run this)
 
 ### LLM Evaluator
-1) In a terminal window, run `phoenix serve`  
+In a terminal window, run `phoenix serve`
+
 This starts a server that runs the tracing dashboard on your localhost
 
 ### Data Analysis Agent
-1) In a separate terminal window, run `python ./src/data_analysis_agent/router.py` from the CLI  
+In a separate terminal window, run `python ./src/data_analysis_agent/router.py` from the CLI
+
 You will be prompted, then just ask whatever you'd like!
 
 eg. `Generate a line graph of sales in December 2022 by store` or `What are the best performing products` or `Based on product performance, how can I increase overall sales?`, etc.
