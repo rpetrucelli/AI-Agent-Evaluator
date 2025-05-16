@@ -1,14 +1,15 @@
 # LLM Agent & Evaluator 
 
 ## Project Description
-An AI data analysis agent capable of querying a sales datasbase, analyzing for trends, and creating visualizations of data, all from a user prompt. Leverages OpenAI GPT-4o mini.
+An AI data analysis agent capable of querying a sales datasbase, analyzing for trends, and creating visualizations of data  
+Leverages OpenAI GPT-4o mini.
 
 Tracing and observability is provided by Arize Phoenix, an open-source observability tool.
 
 Inspired by the DeepLearning.AI course "Evaluating AI Agents"
 
 ### LLM Agent Description
-The agent defined in `src/data_analysis_agent/` will prompt GPT 4.0 mini to execute one or more of the following actions:
+The agent defined in `src/data_analysis_agent/` will call GPT-4o mini to execute one or more of the following actions:
 - Query a database (currently a duckdb table loaded from the dataset in `src/data_analysis_agent/data/`)
 - Run analysis on the data
 - Generate python code to represent visualizations of the data
@@ -16,7 +17,7 @@ The agent defined in `src/data_analysis_agent/` will prompt GPT 4.0 mini to exec
 
 ...all defined by user-input natural language
 
-Each of these operations is defined in their own files in the `src/data_analysis_agent/tools/` dir   
+Each of these operations is defined in their own file contained in`src/data_analysis_agent/tools/`  
 Tool execution is decided by the LLM router `run_agent()` in `src/data_analysis_agent/router.py`
 
 ### LLM Evaluator Description
