@@ -1,4 +1,5 @@
 from config import client, MODEL
+from tracing import tracer
 
 # Construct prompt based on analysis type and data subset
 DATA_ANALYSIS_PROMPT = """
@@ -7,6 +8,7 @@ Your job is to answer the following question: {prompt}
 """
 
 # define a method to analyze a provided dataset based on a natural language prompt
+@tracer.tool()
 def analyze_sales_data(prompt: str, data: str) -> str:
     """Implementation of AI-powered sales data analysis"""
     formatted_prompt = DATA_ANALYSIS_PROMPT.format(data=data, prompt=prompt)

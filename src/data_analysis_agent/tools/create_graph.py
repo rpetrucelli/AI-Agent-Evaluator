@@ -1,3 +1,6 @@
+from tracing import tracer
+
+@tracer.tool()
 def execute_generated_code(generated_code: str):
     """
     Executes the provided Python code string without halting the program.

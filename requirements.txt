@@ -1,20 +1,15 @@
-# requirements file
-# note which revision of python, for example 3.9.6
-# in this file, insert all the pip install needs, include revision
-
-#for example:
 torch
 numpy==1.26.3
 matplotlib
 pandas
-
-openinference-instrumentation==0.1.21
-arize-phoenix-otel==0.7.1
-arize-phoenix==7.0.0
+pydantic
 openai==1.54.5
 httpx<0.28
-openinference-instrumentation-openai==0.1.18
 
+openinference-instrumentation==0.1.21
+openinference-instrumentation-openai==0.1.18
+arize-phoenix
+arize-phoenix-otel
 
 sqlalchemy==2.0.36
 aiosqlite==0.20.0

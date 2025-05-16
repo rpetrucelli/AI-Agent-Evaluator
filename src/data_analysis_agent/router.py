@@ -1,10 +1,13 @@
+from helper import get_phoenix_endpoint
 from tools.data_lookup import lookup_sales_data
 from tools.data_analysis import analyze_sales_data
 from tools.data_visualization import generate_visualization_code
-from tools.generate_graph import execute_generated_code
-import json
+from tools.create_graph import execute_generated_code
+import sys, json
 from  config import client, MODEL
-import sys
+from tracing import tracer
+from opentelemetry.trace import StatusCode
+
 
 # Define tools/functions that can be called by the model in the accepted syntax
 tools = [
@@ -12,7 +15,7 @@ tools = [
         "type": "function",
         "function": {
             "name": "lookup_sales_data",
-            "description": "Look up data from Store Sales Price Elasticity Promotions dataset",
+            "description": "Look up data from Store Sales Price Elasticity Promotions dataset. Do not call this tool multiple times",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -56,7 +59,7 @@ tools = [
     "type": "function",
     "function": {
         "name": "execute_generated_code",
-        "description": "Execute the data visualization code from the generate_visualization_code tool",
+        "description": "Only if prompted by the user, execute the data visualization code from the generate_visualization_code tool",
         "parameters": {
             "type": "object",
             "properties": {
@@ -83,6 +86,7 @@ You excel at generating clean and readable visaulizations of the data.
 """
 
 # code for executing the tools returned in the model's response
+@tracer.chain()
 def handle_tool_calls(tool_calls, messages):
     for tool_call in tool_calls:   
         function = tool_implementations[tool_call.function.name]
@@ -108,52 +112,59 @@ def run_agent(messages):
 
     # define a loop to recursively make tool calls while the LLM router decides they are necessary
     while True:
-        print("Making router call to OpenAI")
-        response = client.chat.completions.create(
-            model=MODEL,
-            messages=messages,
-            tools=tools,
-        )
-        messages.append(response.choices[0].message)
-        tool_calls = response.choices[0].message.tool_calls
-        print("Received response with tool calls:", bool(tool_calls))
+        # Router Span
+        print("Starting router call span")
 
-        # if the model decides to call function(s), print which one and call handle_tool_calls
-        if tool_calls:
-            print(f"Processing tool calls: {tool_calls[0].function.name}")
-            messages = handle_tool_calls(tool_calls, messages)
+        with tracer.start_as_current_span("router_call", openinference_span_kind="chain") as span:
+            # set the span input and call the model 
+            span.set_input(value=messages) 
+            response = client.chat.completions.create(
+                model=MODEL,
+                messages=messages,
+                tools=tools,
+            )
 
-        # otherwise, break the loop
-        else:
-            print("No tool calls, returning final response")
-            return response.choices[0].message.content
+            messages.append(response.choices[0].message.model_dump())
+            tool_calls = response.choices[0].message.tool_calls
+            print("Received response with tool calls:", bool(tool_calls))
+            span.set_status(StatusCode.OK)
+    
+            if tool_calls:
+                print("Starting tool calls span")
+                messages = handle_tool_calls(tool_calls, messages)
+                span.set_output(value=tool_calls)
+            else:
+                print("No tool calls, returning final response")
+                span.set_output(value=response.choices[0].message.content)
+                return response.choices[0].message.content
+
+# this main span will wrap the entire agent run`
+def start_main_span(messages):
+    print("Starting main span with messages:", messages)
+    
+    with tracer.start_as_current_span("AgentRun", openinference_span_kind="agent") as span:
+        span.set_input(value=messages)
+        ret = run_agent(messages)
+        print("Main span completed with return value:", ret)
+        span.set_output(value=ret)
+        span.set_status(StatusCode.OK)
+
+        return ret
 
 # allow the agent to be run via cli
+# TODO fix chart file saving
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        prompt = " ".join(sys.argv[1:])
-        result = run_agent(prompt)
+    prompt = input("Enter your prompt: ")
+    if prompt.strip():
+        messages = [{"role": "user", "content": prompt}]
+        result = start_main_span(messages)
         print("Results: \n" + result)
-
+        print("\nView the phoenix trace at: " + get_phoenix_endpoint())
     else:
-        print("usage: python router.py <'your prompt here'>")
+        print("No prompt provided")
 
-### Example usage
-# result = run_agent('Show me the code for graph of sales by store in Nov 2021, and tell me what trends you see.')
-# print(result) will then produce something similar to below:
-
-### ------------------------------
-# Here is the Python code to create a graph of sales by store for November 2021:
-
-# ```
-#    python code that can be run to generate a graph of the data
-# ```
-
-# ### Trends Observed:
-# 1. **Store Performance**: Certain stores, particularly Store 1100, Store 3300, and Store 1650, show higher sales values, indicating they are performing well compared to others.
-# 2. **Outlier Performance**: Store 2970 significantly outperforms others in terms of total sales value, suggesting it may have unique offerings or a strong customer base.
-# 3. **Low Sales Stores**: Some stores like Store 4400, with a very low sales value, could be facing challenges such as low demand.
-# 4. **Potential for Improvement**: Stores with lower performance could benefit from a review of inventory, marketing strategies, and customer engagement tactics.
-
-# This analysis provides insights into store performance and can guide strategic decisions for inventory management, marketing initiatives, and potential promotions.
+### ------Example usage-----------
+###
+### python router.py
+###
 ### ------------------------------

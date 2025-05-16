@@ -1,6 +1,8 @@
 import pandas as pd
 import duckdb
 from config import client, MODEL
+from tracing import tracer
+from opentelemetry.trace import StatusCode
 
 
 # define the path to the dataset
@@ -28,26 +30,32 @@ def generate_sql_query(prompt: str, columns: list, table_name: str) -> str:
     return response.choices[0].message.content
 
 # method to read the data file into a db table, then query it with the LLM generated query
+@tracer.tool()
 def lookup_sales_data(prompt: str) -> str:
     """Implementation of sales data lookup from parquet file using SQL"""
     try:
         # define the table name
         table_name = "sales"
         
-        # read the parquet file into a DuckDB table
+        # step 1: read the parquet file into a DuckDB table
         df = pd.read_parquet(TRANSACTION_DATA_FILE_PATH)
         duckdb.sql(f"CREATE TABLE IF NOT EXISTS {table_name} AS SELECT * FROM df")
 
-        # generate the SQL code
+        # step 2: generate the SQL code
         sql_query = generate_sql_query(prompt, df.columns, table_name)
-
+        
         # clean the response to make sure it only includes the SQL code
         sql_query = sql_query.strip()
         sql_query = sql_query.replace("```sql", "").replace("```", "")
-        
-        # execute the SQL query
-        result = duckdb.sql(sql_query).df()
-        
+
+        # trace execution of the SQL query
+        with tracer.start_as_current_span("execute_sql_query", openinference_span_kind="chain" ) as span:
+            span.set_input(sql_query)
+            # step 3: execute the SQL query
+            result = duckdb.sql(sql_query).df()
+            span.set_output(value=str(result))
+            span.set_status(StatusCode.OK)
+
         return result.to_string()
     
     except Exception as e:

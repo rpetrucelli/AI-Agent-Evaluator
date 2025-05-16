@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
 from config import client, MODEL
+from tracing import tracer
 
 ## in this file, we take a 2 step approach to visualize the data, which reduces variance in and improves the accuracy of the LLMs response
 # Firstly, we use an LLM call to generate the correct chart configuration
@@ -28,6 +29,7 @@ class VisualizationConfig(BaseModel):
     title: str = Field(..., description="Title of the chart")
 
     # method to generate the chart configurations
+    @tracer.chain()
     def extract_chart_config(data: str, visualization_goal: str) -> dict:
         """Generate chart visualization configuration
         
@@ -68,6 +70,7 @@ class VisualizationConfig(BaseModel):
             }
         
 # create a chart based on the config defined in the above method
+@tracer.chain()
 def create_chart(config: dict) -> str:
     """Create a chart based on the configuration"""
     formatted_prompt = CREATE_CHART_PROMPT.format(config=config)
@@ -83,9 +86,10 @@ def create_chart(config: dict) -> str:
     
     return code
 
-# TODO, add a 3rd method to error check the code generated
+# TODO, Error checking chain. This decreased performance siginficantly in the past, but may be worth trying again
 
 # Method to tie the 2 steps together and return the code for the visualizations
+@tracer.tool()
 def generate_visualization_code(data: str, visualization_goal: str) -> str:
     """Generate a visualization based on the data and goal"""
     config = VisualizationConfig.extract_chart_config(data, visualization_goal)
