@@ -1,4 +1,4 @@
-# LLM Agent & Evaluator 
+# LLM Data Analysis Agent & Evaluator 
 
 ## Project Description
 AI data analysis agent capable of querying a sales database, analyzing trends, and creating data visualizations
