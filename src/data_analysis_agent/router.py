@@ -148,15 +148,16 @@ def start_main_span(messages, trace_name="Agent Run"):
         print("Main span completed with return value:", ret)
         span.set_output(value=ret)
         span.set_status(StatusCode.OK)
-
-        return ret
+        trace_id = span.get_span_context().trace_id
+        trace_id = format(trace_id, "032x")
+        return ret, trace_id
 
 # allow the agent to be run via cli
 if __name__ == "__main__":
     prompt = input("Enter your prompt: ")
     if prompt.strip():
         messages = [{"role": "user", "content": prompt}]
-        result = start_main_span(messages)
+        result, trace_id = start_main_span(messages)
         print("Results: \n" + result)
         print("\nView the phoenix trace at: " + get_phoenix_endpoint())
     else:

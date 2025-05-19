@@ -20,10 +20,6 @@ The agent defined in `src/data_analysis_agent/` will call GPT-4o mini to execute
 Each of these operations is defined in their own file contained in`src/data_analysis_agent/tools/`  
 Tool execution is decided by the LLM router `run_agent()` in `src/data_analysis_agent/router.py`
 
-### LLM Evaluator
-In dev
-
-
 ### Agent Tracing
 Arize Phoenix provides all observability tracing in a localhost server.
 This provides robust tracing of the agents behvavior and performance by logging:
@@ -36,20 +32,33 @@ This provides robust tracing of the agents behvavior and performance by logging:
 Once starting the server, the dashboard will be accessible via the link console logged at the end of each execution  
 (It should be "http://localhost:6006/v1/traces")
 
+### LLM Evaluator
+Leveraging Phoenix and OpenInference Instrumentation, I have built out an agent evaluation suite using both LLM-as-a-Judge, and code-based eval approaches.  
+The evaluation script `src/data_analysis_agent/run_eval.py/` will run a suite of test questions (ie cases) against the agent, and evalute its behavior. 
+Using LLM-as-a-Judge, GPT-4o mini will qualitatively evaluate the agents choice of tool calls, response clarity, and accuracy of generated SQL queries.  
+Using code-based eval, we evaluate the correctness of any generated code. 
+
+To improve efficiency and cost, I have configured tool evals to only execute if the agent called a given tool in the thread under test  
+
 ## How to run 
 ### Setup
 1) Instantiate a virtual environment (optional): `python -m venv venv` 
 2) Install requirements: `pip install -r requirements.txt`
 3) Configure your OpenAI API key in `src/data_analysis_agent/helper.py` (you will need tokens to run this)
+4) `cd src/data_analysis_agent`
 
 ### Start Tracing
 In a terminal window, run `phoenix serve`
 
 ### Run Agent
-In a separate terminal window, run `python ./src/data_analysis_agent/router.py` from the CLI
+In a separate terminal window, run `python router.py`
 
 You will be prompted, then just ask whatever you'd like!  
 eg. `Generate a line graph of sales in December 2022 by store` or `What are the best performing products` or `Based on product performance, how can I increase overall sales?`, etc.
+
+### Evaluate Agent
+Run `python run_eval.py`
+The stream of evaluations will be console logged, and all eval results will be visible on the phoenix dashboard!
 
 ## Note
 To protect my API key, I stopped VCS tracing by running `git update-index --assume-unchanged .\src\data_analysis_agent\helper.py`
