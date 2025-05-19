@@ -114,6 +114,7 @@ def run_agent(messages, trace_id=None):
     if not any( isinstance(message, dict) and message.get("role") == "system" for message in messages ):
             system_prompt = {"role": "system", "content": SYSTEM_PROMPT}
             messages.append(system_prompt)
+    
 
     # define a loop to recursively make tool calls while the LLM router decides they are necessary
     while True:
