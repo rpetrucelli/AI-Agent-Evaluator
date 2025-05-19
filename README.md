@@ -58,7 +58,7 @@ eg. `Generate a line graph of sales in December 2022 by store` or `What are the 
 
 ### Evaluate Agent
 Run `python run_eval.py`  
-This script will run a list of test prompts through the agent. 
+This script will run a list of test prompts through the agent.  
 All progress will be console logged, and all eval results will be visible on the phoenix dashboard!
 
 ## Note
