@@ -34,7 +34,7 @@ Once starting the server, the dashboard will be accessible via the link console 
 
 ### LLM Evaluator
 Leveraging Phoenix and OpenInference Instrumentation, I have built out an agent evaluation suite using both LLM-as-a-Judge, and code-based eval approaches.  
-The evaluation script `src/data_analysis_agent/run_eval.py/` will run a suite of test questions (contained in `eval/cases.py`) against the agent to evalute its behavior.  
+The evaluation script `src/data_analysis_agent/run_eval.py/` will run a suite of test prompts (contained in `eval/cases.py`) against the agent to evalute its behavior.  
 Using LLM-as-a-Judge, GPT-4o mini will qualitatively evaluate the agents choice of tool calls, response clarity, and accuracy of generated SQL queries.  
 Using code-based eval, we evaluate the correctness of any generated code, as well as the success of its execution
 
@@ -58,7 +58,6 @@ eg. `Generate a line graph of sales in December 2022 by store` or `What are the 
 
 ### Evaluate Agent
 Run `python run_eval.py`  
-This script will run a list of test prompts through the agent.  
 All progress will be console logged, and all eval results will be visible on the phoenix dashboard!
 
 ## Note
