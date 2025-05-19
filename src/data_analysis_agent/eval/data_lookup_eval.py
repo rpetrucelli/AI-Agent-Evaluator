@@ -10,49 +10,50 @@ from phoenix.trace import SpanEvaluations
 # Evaluate the data lookup tool
 def evaluate_lookup_sales_data(trace_id, PROJECT_NAME, API_KEY):
     SQL_EVAL_GEN_PROMPT = """
-    SQL Evaluation Prompt:
-    -----------------------
-    You are tasked with determining if the SQL generated appropiately answers a given instruction
-    taking into account its generated query and response.
+        SQL Evaluation Prompt:
+        -----------------------
+        You are tasked with determining if the SQL generated appropiately answers a given instruction
+        taking into account its generated query and response.
 
-    Data:
-    -----
-    - [Instruction]: {question}
-    This section contains the specific task or problem that the sql query is intended to solve.
+        Data:
+        -----
+        - [Instruction]: {question}
+        This section contains the specific task or problem that the sql query is intended to solve.
 
-    - [Reference Query]: {response}
-    This is the sql query submitted for evaluation. Analyze it in the context of the provided
-    instruction.
+        - [Reference Query]: {query_gen}
+        This is the sql query submitted for evaluation. Analyze it in the context of the provided
+        instruction.
 
-    Evaluation:
-    -----------
-    Your response should be a single word: either "correct" or "incorrect".
-    You must assume that the db exists and that columns are appropiately named.
-    You must take into account the response as additional information to determine the correctness.
+        Evaluation:
+        -----------
+        Your response should be a single word: either "correct" or "incorrect".
+        You must assume that the db exists and that columns are appropiately named.
+        You must take into account the response as additional information to determine the correctness.
 
-    - "correct" indicates that the sql query correctly solves the instruction.
-    - "incorrect" indicates that the sql query correctly does not solve the instruction correctly.
+        - "correct" indicates that the sql query correctly solves the instruction.
+        - "incorrect" indicates that the sql query correctly does not solve the instruction correctly.
 
-    Note: Your response should contain only the word "correct" or "incorrect" with no additional text
-    or characters.
+        Note: Your response should contain only the word "correct" or "incorrect" with no additional text
+        or characters.
     """
 
     # filter down LLM spans to the ones in the trace that generated SQL queries
     query = SpanQuery().where(
-        f"name == 'lookup_sales_data' and trace_id == '{trace_id}'"
+        "span_kind=='LLM'"
     ).select(
-        response="output.value",
+        query_gen="llm.output_messages",
         question="input.value",
     )
 
-    # Query phoenix and return the dataframe of LLM calls that were asked to create SQL queries.
+    # Query phoenix and return the dataframe of LLM calls in this trace that were asked to create SQL queries.
     sql_df = px.Client().query_spans(query, project_name=PROJECT_NAME, timeout=None)
+    sql_df = sql_df[sql_df["question"].str.contains("Generate an efficient SQL query based on a prompt.", case=False, na=False)]
+    print(f"SQL generation dataframe:\n {sql_df.head()}\n")
+
     if sql_df.empty:
         print(f"No lookup_sales_data tool calls found for trace_id {trace_id}. Skipping eval.")
         return
-
-    print(f"\nSQL call dataframe:\n {sql_df.head()}\n")
-
+    
     # run LLM-as-a-judge on the dataframe with the SQL prompt
     with suppress_tracing():
         sql_gen_eval = llm_classify(
@@ -71,4 +72,3 @@ def evaluate_lookup_sales_data(trace_id, PROJECT_NAME, API_KEY):
     px.Client().log_evaluations(
         SpanEvaluations(eval_name="SQL Gen Eval", dataframe=sql_gen_eval),
     )
-    print("\nSQL generation evaluation uploaded to Phoenix.\n")

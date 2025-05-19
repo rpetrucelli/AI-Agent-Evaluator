@@ -48,7 +48,6 @@ def evaluate_analyze_sales_data(trace_id, PROJECT_NAME, API_KEY):
     if clarity_df.empty:
         print(f"No analyze_sales_data tool calls found for trace_id {trace_id}. Skipping eval.")
         return
-    print(f"\nClarity dataframe:\n {clarity_df.head()}\n")
 
     # run LLM-as-a-judge on the dataframe with the clarity prompt
     with suppress_tracing():
@@ -61,11 +60,10 @@ def evaluate_analyze_sales_data(trace_id, PROJECT_NAME, API_KEY):
         )
 
     clarity_eval['score'] = clarity_eval.apply(lambda x: 1 if x['label']=='clear' else 0, axis=1)
-    print(f"\nClarity eval dataframe:\n {clarity_eval.head()}\n")
+    print(f"\nAnalysis Clarity eval dataframe:\n {clarity_eval.head()}\n")
 
     # upload the evaluation back to phoenix
     print("\nUploading `clarity` evaluation to Phoenix...\n")
     px.Client().log_evaluations(
         SpanEvaluations(eval_name="Response Clarity", dataframe=clarity_eval),
     )
-    print("\nClarity evaluation uploaded successfully.\n")

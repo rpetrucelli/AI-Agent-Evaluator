@@ -15,7 +15,7 @@ tools = [
         "type": "function",
         "function": {
             "name": "lookup_sales_data",
-            "description": "Look up data from Store Sales Price Elasticity Promotions dataset. Do not call this tool multiple times",
+            "description": "Look up data from Store Sales Price Elasticity Promotions dataset",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -29,7 +29,7 @@ tools = [
         "type": "function",
         "function": {
             "name": "analyze_sales_data", 
-            "description": "Analyze sales data to extract insights or trends.",
+            "description": "Analyze sales data to extract insights or trends",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -63,9 +63,10 @@ tools = [
         "parameters": {
             "type": "object",
             "properties": {
-                "generated_code": {"type": "string", "description": "The Python code to execute."}
+                "generated_code": {"type": "string", "description": "The Python code to execute."},
+                 "trace_id": {"type": "string", "description": "The trace ID for this agent run."}
             },
-            "required": ["generated_code"]
+            "required": ["generated_code", "trace_id"]
         }
     }
 }
@@ -87,18 +88,22 @@ You excel at generating clean and readable visaulizations of the data.
 
 # code for executing the tools returned in the model's response
 @tracer.chain()
-def handle_tool_calls(tool_calls, messages):
+def handle_tool_calls(tool_calls, messages, trace_id=None):
     for tool_call in tool_calls:   
         function = tool_implementations[tool_call.function.name]
         function_args = json.loads(tool_call.function.arguments)
+
+        # Inject trace_id if this is the execute_generated_code tool
+        if tool_call.function.name == "execute_generated_code" and trace_id is not None:
+            function_args["trace_id"] = trace_id
+
         result = function(**function_args)
         messages.append({"role": "tool", "content": result, "tool_call_id": tool_call.id})
-
         print(f"Completed tool call to {function}")
         
     return messages
 
-def run_agent(messages):
+def run_agent(messages, trace_id=None):
     print("Running agent with messages:", messages)
 
     # check for incorrect syntax
@@ -131,7 +136,7 @@ def run_agent(messages):
     
             if tool_calls:
                 print("Starting tool calls span")
-                messages = handle_tool_calls(tool_calls, messages)
+                messages = handle_tool_calls(tool_calls, messages, trace_id=trace_id)
                 span.set_output(value=tool_calls)
             else:
                 print("No tool calls, returning final response")
@@ -144,12 +149,11 @@ def start_main_span(messages, trace_name="Agent Run"):
     
     with tracer.start_as_current_span(trace_name, openinference_span_kind="agent") as span:
         span.set_input(value=messages)
-        ret = run_agent(messages)
+        trace_id = format(span.get_span_context().trace_id, "032x") 
+        ret = run_agent(messages, trace_id=trace_id)
         print("Main span completed with return value:", ret)
         span.set_output(value=ret)
         span.set_status(StatusCode.OK)
-        trace_id = span.get_span_context().trace_id
-        trace_id = format(trace_id, "032x")
         return ret, trace_id
 
 # allow the agent to be run via cli

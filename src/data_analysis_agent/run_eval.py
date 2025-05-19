@@ -6,6 +6,7 @@ from eval.router_eval import run_router_eval
 from eval.data_lookup_eval import evaluate_lookup_sales_data
 from eval.data_analysis_eval import evaluate_analyze_sales_data
 from eval.data_visualization_eval import evaluate_generate_visualization_code
+from eval.create_graph_eval import evaluate_execute_generated_code
 from eval.cases import agent_questions
 
 from tqdm import tqdm
@@ -44,6 +45,8 @@ for question in tqdm(agent_questions, desc="Processing questions"):
         print(f"\n\nEvaluating generate visualization code for trace_id {trace_id} ...\n")
         evaluate_generate_visualization_code(trace_id, PROJECT_NAME)
 
+        print(f"\n\nEvaluating create_graph for trace_id {trace_id} ...\n")
+        evaluate_execute_generated_code(trace_id, PROJECT_NAME)
 
     except Exception as e:
         print(f"Error processing question: {question}")

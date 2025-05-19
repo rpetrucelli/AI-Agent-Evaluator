@@ -18,6 +18,7 @@ The table name is: {table_name}
 """
 
 # method to format the above prompt and leverage gpt 4.0 mini to generate the sql query
+@tracer.chain()
 def generate_sql_query(prompt: str, columns: list, table_name: str) -> str:
     """Generate an SQL query based on a prompt"""
     formatted_prompt = SQL_GENERATION_PROMPT.format(prompt=prompt, columns=columns, table_name=table_name)

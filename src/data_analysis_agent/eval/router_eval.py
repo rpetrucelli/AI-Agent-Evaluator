@@ -24,7 +24,6 @@ def run_router_eval(trace_id, PROJECT_NAME, API_KEY):
     # Query phoenix and return the dataframe of LLM calls.
     tool_calls_df = px.Client().query_spans(query, project_name=PROJECT_NAME,timeout=None)
     tool_calls_df = tool_calls_df.dropna(subset=["tool_call"])
-    print(f"\nTool calls dataframe:\n {tool_calls_df.head()}\n")
 
     # format the eval template
     TOOL_CALL_EVAL_TEMPLATE = TOOL_CALLING_PROMPT_TEMPLATE.template[0].template.replace(
@@ -43,11 +42,10 @@ def run_router_eval(trace_id, PROJECT_NAME, API_KEY):
 
     # add a score column to the eval dataframe
     tool_call_eval['score'] = tool_call_eval.apply(lambda x: 1 if x['label']=='correct' else 0, axis=1)
-    print(f"\nEval dataframe:\n {tool_call_eval.head()})\n")
+    print(f"\nTool Calls eval dataframe:\n {tool_call_eval.head()})\n")
 
     # upload the evaluation back to phoenix
     print("\nUploading Tool Call Evaluation to Phoenix...\n")
     px.Client().log_evaluations(
         SpanEvaluations(eval_name="Tool Calling Eval", dataframe=tool_call_eval),
     )
-    print("\nTool Call Evaluation uploaded to Phoenix.\n")
