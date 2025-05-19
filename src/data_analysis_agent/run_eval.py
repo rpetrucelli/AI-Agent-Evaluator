@@ -6,6 +6,7 @@ from eval.router_eval import run_router_eval
 from eval.data_lookup_eval import evaluate_lookup_sales_data
 from eval.data_analysis_eval import evaluate_analyze_sales_data
 from eval.data_visualization_eval import evaluate_generate_visualization_code
+from eval.cases import agent_questions
 
 from tqdm import tqdm
 from helper import get_openai_api_key
@@ -20,17 +21,6 @@ from router import start_main_span
 trace_name = "Evaluation Agent"
 PROJECT_NAME = "Data Analysis Agent"
 API_KEY = get_openai_api_key()
-
-### Router Evaluation
-agent_questions = [
-    "What was the most popular product SKU?",
-    # "What was the total revenue across all stores?",
-    # "Which store had the highest sales volume?",
-    #"Generate code representing a bar chart showing total sales by store. Do not execute the code.",
-    # "What percentage of items were sold on promotion?",
-    #"What was the average transaction value?",
-    # "What are some trends in sales?",
-]
 
 # loop through the questions (use tdqm to show progress)
 for question in tqdm(agent_questions, desc="Processing questions"):
