@@ -21,9 +21,9 @@ Each of these operations is defined in their own file contained in`src/data_anal
 Tool execution is decided by the LLM router `run_agent()` in `src/data_analysis_agent/router.py`
 
 ### Agent Tracing
-Arize Phoenix provides all observability tracing in a localhost server.  
-This provides robust tracing of the agents behvavior and performance by logging:
-- Tool & LLM calls
+Arize Phoenix provides observability in a localhost server.  
+This gives robust tracing of the agents behvavior and performance by logging:
+- API & LLM calls
 - Execution order
 - Token usage
 - Performance
@@ -34,9 +34,9 @@ Once starting the server, the dashboard will be accessible via the link console 
 
 ### LLM Evaluator
 Leveraging Phoenix and OpenInference Instrumentation, I have built out an agent evaluation suite using both LLM-as-a-Judge, and code-based eval approaches.  
-The evaluation script `src/data_analysis_agent/run_eval.py/` will run a suite of test questions (ie cases) against the agent, and evalute its behavior.  
+The evaluation script `src/data_analysis_agent/run_eval.py/` will run a suite of test questions (contained in `eval/cases.py`) against the agent to evalute its behavior.  
 Using LLM-as-a-Judge, GPT-4o mini will qualitatively evaluate the agents choice of tool calls, response clarity, and accuracy of generated SQL queries.  
-Using code-based eval, we evaluate the correctness of any generated code. 
+Using code-based eval, we evaluate the correctness of any generated code, as well as the success of its execution
 
 To improve efficiency and cost, I have configured tool evals to only execute if the agent called a given tool in the thread under test  
 
@@ -44,7 +44,7 @@ To improve efficiency and cost, I have configured tool evals to only execute if 
 ### Setup
 1) Instantiate a virtual environment (optional): `python -m venv venv` 
 2) Install requirements: `pip install -r requirements.txt`
-3) Configure your OpenAI API key in `src/data_analysis_agent/helper.py` (you will need tokens to run this)
+3) Configure your OpenAI API key in `src/data_analysis_agent/helper.py` (you will need OpenAI tokens to run this)
 4) `cd src/data_analysis_agent`
 
 ### Start Tracing
@@ -58,7 +58,8 @@ eg. `Generate a line graph of sales in December 2022 by store` or `What are the 
 
 ### Evaluate Agent
 Run `python run_eval.py`  
-The stream of evaluations will be console logged, and all eval results will be visible on the phoenix dashboard!
+This script will run a list of test prompts through the agent. 
+All progress will be console logged, and all eval results will be visible on the phoenix dashboard!
 
 ## Note
 To protect my API key, I stopped VCS tracing by running `git update-index --assume-unchanged .\src\data_analysis_agent\helper.py`
