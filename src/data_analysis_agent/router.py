@@ -29,7 +29,7 @@ tools = [
         "type": "function",
         "function": {
             "name": "analyze_sales_data", 
-            "description": "Analyze sales data to extract insights.",
+            "description": "Analyze sales data to extract insights or trends.",
             "parameters": {
                 "type": "object",
                 "properties": {
