@@ -4,7 +4,7 @@
 AI data analysis agent capable of querying a sales database, analyzing trends, and creating data visualizations.
 Leverages OpenAI GPT-4o mini.
 
-Tracing and observability is provided by Arize Phoenix, an open-source observability tool.
+Tracing, Evaluation, and Convergence testing are facilitated by Arize Phoenix, an open-source observability tool.
 
 Inspired by the DeepLearning.AI course "Evaluating AI Agents".
 
