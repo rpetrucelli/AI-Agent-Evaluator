@@ -9,31 +9,14 @@ import pandas as pd
 from datetime import datetime
 
 from router import run_agent
+from eval.cases import convergence_questions
 
 import nest_asyncio
 nest_asyncio.apply()
 
 # Firstly create a dataset of test cases
 px_client = px.Client()
-convergence_questions = [
-    "What was the average quantity sold per transaction?",
-    "What is the mean number of items per sale?", 
-    "Calculate the typical quantity per transaction",
-    "What's the mean transaction size in terms of quantity?",
-    "On average, how many items were purchased per transaction?",
-    "What is the average basket size per sale?",
-    "Calculate the mean number of products per purchase",
-    "What's the typical number of units per order?",
-    "What is the average number of products bought per purchase?",
-    "Tell me the mean quantity of items in a typical transaction",
-    "How many items does a customer buy on average per transaction?",
-    "What's the usual number of units in each sale?",
-    "What is the typical amount of products per transaction?",
-    "Show the mean number of items customers purchase per visit",
-    "What's the average quantity of units per shopping trip?",
-    "How many products do customers typically buy in one transaction?",
-    "What is the standard basket size in terms of quantity?"
-]
+
 
 convergence_df = pd.DataFrame({
     'question': convergence_questions
