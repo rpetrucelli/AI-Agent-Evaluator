@@ -45,7 +45,7 @@ Once starting the server, the dashboard will be accessible via the link console 
 ### Start Tracing
 In a terminal window, run `phoenix serve`
 
-### Data Analysis Agent
+### Run Agent
 In a separate terminal window, run `python ./src/data_analysis_agent/router.py` from the CLI
 
 You will be prompted, then just ask whatever you'd like!  

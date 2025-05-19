@@ -139,10 +139,10 @@ def run_agent(messages):
                 return response.choices[0].message.content
 
 # this main span will wrap the entire agent run`
-def start_main_span(messages):
+def start_main_span(messages, trace_name="Agent Run"):
     print("Starting main span with messages:", messages)
     
-    with tracer.start_as_current_span("Run Data Analysis Agent", openinference_span_kind="agent") as span:
+    with tracer.start_as_current_span(trace_name, openinference_span_kind="agent") as span:
         span.set_input(value=messages)
         ret = run_agent(messages)
         print("Main span completed with return value:", ret)
@@ -152,7 +152,6 @@ def start_main_span(messages):
         return ret
 
 # allow the agent to be run via cli
-# TODO fix chart file saving
 if __name__ == "__main__":
     prompt = input("Enter your prompt: ")
     if prompt.strip():

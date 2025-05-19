@@ -2,7 +2,7 @@ from helper import get_phoenix_endpoint
 from phoenix.otel import register
 from openinference.instrumentation.openai import OpenAIInstrumentor
 
-PROJECT_NAME = "data_analysis_agent"
+PROJECT_NAME = "Data Analysis Agent"
 
 # Set up OpenTelemetry tracing
 tracer_provider = register(
