@@ -40,7 +40,7 @@ Using LLM-as-a-Judge, GPT-4o mini will qualitatively evaluate the agents choice 
 
 Using code-based eval, we evaluate the correctness of any generated code, as well as the success of its execution.
 
-To improve efficiency and cost, I have configured tool evals to only execute if the agent called a given tool in the thread under test  
+To improve efficiency and cost, I have configured tool evals to only execute if the agent called a given tool in the thread under test.  
 Eval results are visible from the phoenix tracing dashboard.
 
 ### Convergence Testing
@@ -76,4 +76,4 @@ Run `python run_convergence_eval.py`
 All convergence test results will be displayed, and will be visible at the link console logged upon completion. 
 
 ## Note
-To protect my API key, I stopped VCS tracing by running `git update-index --assume-unchanged .\src\data_analysis_agent\helper.py`
+To protect my API key, I stopped VCS tracking by running `git update-index --assume-unchanged .\src\data_analysis_agent\helper.py`
