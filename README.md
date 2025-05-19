@@ -1,12 +1,12 @@
 # LLM Data Analysis Agent with Tracing and Evaluation
 
 ## Project Description
-AI data analysis agent capable of querying a sales database, analyzing trends, and creating data visualizations
-Leverages OpenAI GPT-4o mini
+AI data analysis agent capable of querying a sales database, analyzing trends, and creating data visualizations.
+Leverages OpenAI GPT-4o mini.
 
-Tracing and observability is provided by Arize Phoenix, an open-source observability tool
+Tracing and observability is provided by Arize Phoenix, an open-source observability tool.
 
-Inspired by the DeepLearning.AI course "Evaluating AI Agents"
+Inspired by the DeepLearning.AI course "Evaluating AI Agents".
 
 ### LLM Agent
 The agent defined in `src/data_analysis_agent/` will call GPT-4o mini to execute one or more of the following actions:
@@ -21,7 +21,7 @@ Each of these operations is defined in their own file contained in`src/data_anal
 Tool execution is decided by the LLM router `run_agent()` in `src/data_analysis_agent/router.py`
 
 ### Agent Tracing
-Arize Phoenix provides all observability tracing in a localhost server.
+Arize Phoenix provides all observability tracing in a localhost server.  
 This provides robust tracing of the agents behvavior and performance by logging:
 - Tool & LLM calls
 - Execution order
@@ -34,7 +34,7 @@ Once starting the server, the dashboard will be accessible via the link console 
 
 ### LLM Evaluator
 Leveraging Phoenix and OpenInference Instrumentation, I have built out an agent evaluation suite using both LLM-as-a-Judge, and code-based eval approaches.  
-The evaluation script `src/data_analysis_agent/run_eval.py/` will run a suite of test questions (ie cases) against the agent, and evalute its behavior. 
+The evaluation script `src/data_analysis_agent/run_eval.py/` will run a suite of test questions (ie cases) against the agent, and evalute its behavior.  
 Using LLM-as-a-Judge, GPT-4o mini will qualitatively evaluate the agents choice of tool calls, response clarity, and accuracy of generated SQL queries.  
 Using code-based eval, we evaluate the correctness of any generated code. 
 
@@ -57,7 +57,7 @@ You will be prompted, then just ask whatever you'd like!
 eg. `Generate a line graph of sales in December 2022 by store` or `What are the best performing products` or `Based on product performance, how can I increase overall sales?`, etc.
 
 ### Evaluate Agent
-Run `python run_eval.py`
+Run `python run_eval.py`  
 The stream of evaluations will be console logged, and all eval results will be visible on the phoenix dashboard!
 
 ## Note
