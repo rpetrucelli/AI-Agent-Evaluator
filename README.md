@@ -38,14 +38,17 @@ The evaluation script `src/data_analysis_agent/run_agent_eval.py/` will run a su
 
 Using LLM-as-a-Judge, GPT-4o mini will qualitatively evaluate the agents choice of tool calls, response clarity, and accuracy of generated SQL queries.  
 
-Using code-based eval, we evaluate the correctness of any generated code, as well as the success of its execution
+Using code-based eval, we evaluate the correctness of any generated code, as well as the success of its execution.
 
 To improve efficiency and cost, I have configured tool evals to only execute if the agent called a given tool in the thread under test  
+Eval results are visible from the phoenix tracing dashboard.
 
 ### Convergence Testing
 Leveraging Phoenix's `experiments` feature, the convergence testing script `src/data_analysis_agent/run_convergence_test.py` measures how closely the agent follows the optimal trajectory (ie path of router steps, LLM calls, etc)  
+
 The script first loads a set of similar prompts into a phoenix dataset, and defines a `run_agent_and_track_path()` method, which runs the agent while tracking the number of calls made.  
-It then executes the experiment, calculates the optimal trajectory (which we define as the minumum number of steps taken from an agent run), and then returns the convergence score for each prompt run.  
+It then executes the experiment, calculates the optimal trajectory (which we define as the minumum number of steps taken from an agent run), and assigns a convergence score to each prompt.  
+
 All test results are visible in Phoenix via the link console logged at the end of each execution (It should be `http://localhost:6006/datasets`)
 
 ## How to run 
@@ -68,7 +71,7 @@ eg. `Generate a line graph of sales in December 2022 by store` or `What are the 
 Run `python run_agent_eval.py`  
 All progress will be console logged, and all eval results will be visible on the phoenix dashboard!
 
-### Evaluate Convergence. 
+### Convergence Test 
 Run `python run_convergence_eval.py`  
 All convergence test results will be displayed, and will be visible at the link console logged upon completion. 
 
