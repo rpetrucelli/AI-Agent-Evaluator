@@ -56,6 +56,7 @@ def format_message_steps(messages):
     
     return "\n".join(steps)
 
+# Define the function to run the agent and track the path
 def run_agent_and_track_path(example: Example) -> str:
     messages = [{"role": "user", "content": example.input.get("question")}]
     ret = run_agent(messages)
@@ -65,7 +66,7 @@ def run_agent_and_track_path(example: Example) -> str:
     return {"path_length": len(ret), "messages": format_message_steps(ret)}
 
 
-## Run the experiment
+## Run the experiment to create a dataframe of the results
 experiment = run_experiment(
     dataset,
     run_agent_and_track_path,
@@ -82,11 +83,14 @@ outputs = experiment.as_dataframe()["output"].to_dict().values()
 optimal_path_length = min(output.get('path_length') for output in outputs if output and output.get('path_length') is not None)
 print(f"\nThe optimal path length is {optimal_path_length}\n")
 
+# Create an evaluator to evaluate the path length
+# The evaluator will return the ratio of the optimal path length to the actual path length
 @create_evaluator(name="Convergence Eval", kind="CODE")
 def evaluate_path_length(output: str) -> float:
     if output and output.get("path_length"):
         return optimal_path_length/float(output.get("path_length"))
     else:
         return 0
-    
+
+# Pass the experiment through the evaluator
 experiment = evaluate_experiment(experiment, evaluators=[evaluate_path_length])

@@ -4,11 +4,10 @@ from phoenix.trace import SpanEvaluations
 
 # Code-based eval on tthe generated visualization code
 def evaluate_generate_visualization_code(trace_id, PROJECT_NAME):
+    # grab generate code spans for the given trace_id
     query = SpanQuery().where(
         f"name =='generate_visualization_code' and trace_id == '{trace_id}'"
     ).select(generated_code="output.value")
-
-    # The Phoenix Client can take this query and return the dataframe.
     code_gen_df = px.Client().query_spans(query, project_name=PROJECT_NAME, timeout=None)
 
     # exit if this tool was not called
@@ -16,8 +15,8 @@ def evaluate_generate_visualization_code(trace_id, PROJECT_NAME):
         print(f"No generate_visualization_code tool calls found for trace_id {trace_id}. Skipping eval.")
         return
 
+    # define code-based eval function to check if the generated code is runnable
     def code_is_runnable(output: str) -> bool:
-        """Check if the code is runnable"""
         output = output.strip()
         output = output.replace("```python", "").replace("```", "")
         try:

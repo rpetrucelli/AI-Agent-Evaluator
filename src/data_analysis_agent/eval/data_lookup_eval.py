@@ -37,19 +37,18 @@ def evaluate_lookup_sales_data(trace_id, PROJECT_NAME, API_KEY):
         or characters.
     """
 
-    # filter down LLM spans to the ones in the trace that generated SQL queries
+    # filter down to LLM spans in the trace that generated SQL queries
     query = SpanQuery().where(
         "span_kind=='LLM'"
     ).select(
         query_gen="llm.output_messages",
         question="input.value",
     )
-
-    # Query phoenix and return the dataframe of LLM calls in this trace that were asked to create SQL queries.
     sql_df = px.Client().query_spans(query, project_name=PROJECT_NAME, timeout=None)
     sql_df = sql_df[sql_df["question"].str.contains("Generate an efficient SQL query based on a prompt.", case=False, na=False)]
     print(f"SQL generation dataframe:\n {sql_df.head()}\n")
 
+    # exit if this tool was not called
     if sql_df.empty:
         print(f"No lookup_sales_data tool calls found for trace_id {trace_id}. Skipping eval.")
         return
@@ -63,7 +62,8 @@ def evaluate_lookup_sales_data(trace_id, PROJECT_NAME, API_KEY):
             model=OpenAIModel(model="gpt-4o", api_key=API_KEY),
             provide_explanation=True
         )
-
+        
+    # add a score column to the eval dataframe with eval results
     sql_gen_eval['score'] = sql_gen_eval.apply(lambda x: 1 if x['label']=='correct' else 0, axis=1)
     print(f"\nSQL generation eval dataframe:\n {sql_gen_eval.head()}\n")
     

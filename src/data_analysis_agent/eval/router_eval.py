@@ -10,18 +10,18 @@ from router import tools
 from openinference.instrumentation import suppress_tracing
 from phoenix.trace import SpanEvaluations
 
+# method to evaluate the tool calls made by the router
 def run_router_eval(trace_id, PROJECT_NAME, API_KEY):
-    # pull tool calls from the trace
+
+    # First grab all LLM spans for the given trace_id
     query = SpanQuery().where(
-        # Filter for the `LLM` span kind.
-        # The filter condition is a string of valid Python boolean expression.
         f"span_kind == 'LLM' and trace_id == '{trace_id}'",
     ).select(
         question="input.value",
         tool_call="llm.tools"
     )
 
-    # Query phoenix and return the dataframe of LLM calls.
+    # Filter them down to the LLM calls that contain tool calls
     tool_calls_df = px.Client().query_spans(query, project_name=PROJECT_NAME,timeout=None)
     tool_calls_df = tool_calls_df.dropna(subset=["tool_call"])
 
@@ -31,6 +31,7 @@ def run_router_eval(trace_id, PROJECT_NAME, API_KEY):
         )
 
     # Use LLM-as-a-judge to evaluate the tool calls chosen by the router
+    # llm_clasify is used to ensure that the eval is either `correct` or `incorrect`
     with suppress_tracing():
         tool_call_eval = llm_classify(
             dataframe = tool_calls_df,

@@ -35,16 +35,16 @@ def evaluate_analyze_sales_data(trace_id, PROJECT_NAME, API_KEY):
     LABEL: "clear" or "unclear"
     """
 
-    # export data analysis spans and grab the output and input values
+    # export data analysis spans for the trace and grab the output and input values
     query = SpanQuery().where(
         f"name == 'analyze_sales_data' and trace_id == '{trace_id}'"
     ).select(
         response="output.value",
         query="input.value"
     )
-
-    # query the project for those and write to a clarity dataframe
     clarity_df = px.Client().query_spans(query,project_name=PROJECT_NAME, timeout=None)
+
+    # if the tool was not called, exit
     if clarity_df.empty:
         print(f"No analyze_sales_data tool calls found for trace_id {trace_id}. Skipping eval.")
         return
@@ -59,6 +59,7 @@ def evaluate_analyze_sales_data(trace_id, PROJECT_NAME, API_KEY):
             provide_explanation=True
         )
 
+    # add a score column to the eval dataframe with eval results
     clarity_eval['score'] = clarity_eval.apply(lambda x: 1 if x['label']=='clear' else 0, axis=1)
     print(f"\nAnalysis Clarity eval dataframe:\n {clarity_eval.head()}\n")
 

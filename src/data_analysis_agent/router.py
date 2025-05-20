@@ -103,6 +103,7 @@ def handle_tool_calls(tool_calls, messages, trace_id=None):
         
     return messages
 
+# define the function that will run the agent
 def run_agent(messages, trace_id=None):
     print("Running agent with messages:", messages)
 
@@ -115,7 +116,6 @@ def run_agent(messages, trace_id=None):
             system_prompt = {"role": "system", "content": SYSTEM_PROMPT}
             messages.append(system_prompt)
     
-
     # define a loop to recursively make tool calls while the LLM router decides they are necessary
     while True:
         # Router Span
@@ -134,7 +134,8 @@ def run_agent(messages, trace_id=None):
             tool_calls = response.choices[0].message.tool_calls
             print("Received response with tool calls:", bool(tool_calls))
             span.set_status(StatusCode.OK)
-    
+
+            # if there are tool calls, handle them. Otherwise, exit the loop
             if tool_calls:
                 print("Starting tool calls span")
                 messages = handle_tool_calls(tool_calls, messages, trace_id=trace_id)
@@ -144,7 +145,7 @@ def run_agent(messages, trace_id=None):
                 span.set_output(value=response.choices[0].message.content)
                 return response.choices[0].message.content
 
-# this main span will wrap the entire agent run`
+# this main span will wrap the entire agent run
 def start_main_span(messages, trace_name="Agent Run"):
     print("Starting main span with messages:", messages)
     

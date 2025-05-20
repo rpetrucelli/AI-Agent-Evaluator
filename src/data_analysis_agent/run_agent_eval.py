@@ -19,11 +19,12 @@ nest_asyncio.apply()
 # import the agent
 from router import start_main_span
 
+# define some constants
 trace_name = "Evaluation Agent"
 PROJECT_NAME = "Data Analysis Agent"
 API_KEY = get_openai_api_key()
 
-# loop through the questions (use tdqm to show progress)
+# loop through the questions using tdqm to show progress
 for question in tqdm(agent_questions, desc="Processing questions"):
     try:
         # run the agent with the question
